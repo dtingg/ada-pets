@@ -1,7 +1,7 @@
-class PetsController < ApplicationController
+class PetsController < ApplicationController  
   def index
-    # @pets = Pet.all
-    render json: { ready_for_lunch: "yassss" }, status: :ok
+    pets = Pet.all.as_json(only: [:id, :name, :age, :human])
+    render json: pets, status: :ok
   end
   
   private
