@@ -7,18 +7,18 @@ describe PetsController do
       
       body = JSON.parse(response.body)
       
-      expect(response.header['Content-Type']).must_include 'json'
-      expect(body).must_be_instance_of Array
       must_respond_with :ok
+      expect(response.header['Content-Type']).must_include 'json'
+      expect(body).must_be_instance_of Array      
     end
     
     it "responds with an array of pet hashes" do
-      # Act
       get pets_path
       
       body = JSON.parse(response.body)
       
-      # Assert
+      must_respond_with :ok
+      expect(response.header['Content-Type']).must_include 'json'
       expect(body).must_be_instance_of Array
       body.each do |pet|
         expect(pet).must_be_instance_of Hash
@@ -27,14 +27,13 @@ describe PetsController do
     end
     
     it "will respond with an empty array when there are no pets" do
-      # Arrange
       Pet.destroy_all
       
-      # Act
       get pets_path
       body = JSON.parse(response.body)
       
-      # Assert
+      must_respond_with :ok
+      expect(response.header['Content-Type']).must_include 'json'
       expect(body).must_be_instance_of Array
       expect(body).must_equal []
     end    
@@ -47,13 +46,12 @@ describe PetsController do
       get pet_path(pet.id)
       body = JSON.parse(response.body)
       
-      expect(body).must_be_instance_of Hash
+      must_respond_with :ok
       expect(response.header['Content-Type']).must_include 'json'
-      expect(body).must_be_instance_of Hash
+      expect(body).must_be_instance_of Hash      
       expect(body["name"]).must_equal pet.name
       expect(body["age"]).must_equal pet.age
       expect(body["human"]).must_equal pet.human
-      
     end
     
     it "responds with hash if pet doesn't exist" do
