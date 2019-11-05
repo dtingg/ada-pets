@@ -5,7 +5,10 @@ describe PetsController do
     it "responds with JSON and success" do
       get pets_path
       
+      body = JSON.parse(response.body)
+      
       expect(response.header['Content-Type']).must_include 'json'
+      expect(body).must_be_instance_of Array
       must_respond_with :ok
     end
     
@@ -13,7 +16,6 @@ describe PetsController do
       # Act
       get pets_path
       
-      # Get the body of the response
       body = JSON.parse(response.body)
       
       # Assert
@@ -46,20 +48,24 @@ describe PetsController do
       body = JSON.parse(response.body)
       
       expect(body).must_be_instance_of Hash
+      expect(response.header['Content-Type']).must_include 'json'
+      expect(body).must_be_instance_of Hash
       expect(body["name"]).must_equal pet.name
       expect(body["age"]).must_equal pet.age
       expect(body["human"]).must_equal pet.human
       
     end
     
-    it "responds with empty hash if pet doesn't exist" do
+    it "responds with hash if pet doesn't exist" do
       invalid_id = -1
       
       get pet_path(invalid_id)
       body = JSON.parse(response.body)
       
+      must_respond_with :not_found
+      expect(response.header["Content-Type"]).must_include 'json'
       expect(body).must_be_instance_of Hash
-      expect(body.empty?).must_equal true
+      expect(body.keys).must_include 'errors'
     end
   end
 end
