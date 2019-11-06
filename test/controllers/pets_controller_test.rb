@@ -2,24 +2,11 @@ require 'test_helper'
 
 describe PetsController do
   describe "index" do
-    it "responds with JSON and success" do
+    it "responds with JSON, success, and an array of pet hashes" do
       get pets_path
       
-      body = JSON.parse(response.body)
+      body = check_response(expected_type: Array)
       
-      must_respond_with :ok
-      expect(response.header['Content-Type']).must_include 'json'
-      expect(body).must_be_instance_of Array      
-    end
-    
-    it "responds with an array of pet hashes" do
-      get pets_path
-      
-      body = JSON.parse(response.body)
-      
-      must_respond_with :ok
-      expect(response.header['Content-Type']).must_include 'json'
-      expect(body).must_be_instance_of Array
       body.each do |pet|
         expect(pet).must_be_instance_of Hash
         expect(pet.keys.sort).must_equal ["age", "human", "id", "name"]
@@ -30,11 +17,9 @@ describe PetsController do
       Pet.destroy_all
       
       get pets_path
-      body = JSON.parse(response.body)
       
-      must_respond_with :ok
-      expect(response.header['Content-Type']).must_include 'json'
-      expect(body).must_be_instance_of Array
+      body = check_response(expected_type: Array)
+      
       expect(body).must_equal []
     end    
   end
@@ -44,11 +29,8 @@ describe PetsController do
       pet = Pet.first
       
       get pet_path(pet.id)
-      body = JSON.parse(response.body)
+      body = check_response(expected_type: Hash)
       
-      must_respond_with :ok
-      expect(response.header['Content-Type']).must_include 'json'
-      expect(body).must_be_instance_of Hash      
       expect(body["name"]).must_equal pet.name
       expect(body["age"]).must_equal pet.age
       expect(body["human"]).must_equal pet.human
@@ -87,5 +69,9 @@ describe PetsController do
       body = JSON.parse(response.body)
       expect(body["errors"].keys).must_include "age"
     end
+  end
+  
+  describe "update" do
+    
   end
 end
